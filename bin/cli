@@ -1,0 +1,46 @@
+#!/usr/bin/env node
+
+/**
+ * Created by zyt on 2016/11/24.
+ */
+
+let commander = require('commander');
+let pad = require('pad');
+let runInit = require('../command/init');
+
+const template = {
+    'simple-page': 'build simple-page',
+    'page': 'build page',
+    'component': 'build custom vue component'
+};
+let description = [];
+for (let name in template) {
+    if (template.hasOwnProperty(name)) {
+        description.push(`    ${pad(name, 20)}${template[name]}`);
+    }
+}
+
+commander
+    .version(require('../package.json').version)
+    .usage('<command>')
+    .description(`
+  For Example:
+
+      cli init page
+    `);
+
+commander
+    .command('init <template>')
+    .description(`
+
+template:
+${description.join('\n')}
+    `)
+    .action((name) => {
+        if (!template[name]) {
+            commander.help();
+            process.exit(1);
+        }
+        runInit(name);
+    });
+commander.parse(process.argv);
